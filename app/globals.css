@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+  body {
+    @apply bg-spotify-black text-white;
+  }
+}
+
+@layer components {
+  .map-container {
+    @apply w-full h-screen relative overflow-hidden;
+  }
+  
+  .country-path {
+    @apply cursor-pointer transition-all duration-200 hover:brightness-110;
+  }
+  
+  .sidebar {
+    @apply fixed right-0 top-0 h-full w-96 bg-spotify-dark border-l border-gray-700 transform transition-transform duration-300 ease-in-out z-50;
+  }
+  
+  .sidebar-open {
+    @apply translate-x-0;
+  }
+  
+  .sidebar-closed {
+    @apply translate-x-full;
+  }
+  
+  .track-item {
+    @apply flex items-center space-x-3 p-3 hover:bg-gray-800 rounded-lg transition-colors duration-200;
+  }
+  
+  .play-button {
+    @apply w-10 h-10 bg-spotify-green rounded-full flex items-center justify-center hover:scale-105 transition-transform duration-200;
+  }
+  
+  .filter-button {
+    @apply px-4 py-2 rounded-full border border-gray-600 hover:border-spotify-green transition-colors duration-200;
+  }
+  
+  .filter-button-active {
+    @apply bg-spotify-green border-spotify-green text-black;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #535353;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1DB954;
+}
