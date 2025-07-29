@@ -10,6 +10,8 @@ import {
 import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { CountryTooltip } from './CountryTooltip';
+import { RippleEffect } from './RippleEffect';
+import { FloatingNotes } from './FloatingNotes';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -80,6 +82,12 @@ interface TooltipState {
   country: string;
 }
 
+interface RippleState {
+  show: boolean;
+  x: number;
+  y: number;
+}
+
 export function WorldMap() {
   const {
     setSelectedCountry,
@@ -87,6 +95,9 @@ export function WorldMap() {
     setIsLoading,
     setHoveredCountry,
     hoveredCountry,
+    selectedCountry,
+    currentlyPlaying,
+    tracks,
     setTracks,
     setAudioFeatures,
   } = useAppStore();
@@ -98,7 +109,15 @@ export function WorldMap() {
     country: '',
   });
 
-  const handleCountryClick = async (geo: any) => {
+  const [ripple, setRipple] = useState<RippleState>({
+    show: false,
+    x: 0,
+    y: 0,
+  });
+
+  const [selectedCountryPosition, setSelectedCountryPosition] = useState<{ x: number; y: number } | null>(null);
+
+  const handleCountryClick = async (geo: any, event: React.MouseEvent) => {
     const countryName = geo.properties.name;
     const countryCode = countryCodeMap[countryName];
 
@@ -106,6 +125,19 @@ export function WorldMap() {
       console.warn(`Country code not found for: ${countryName}`);
       return;
     }
+
+    // Trigger ripple effect at click position
+    setRipple({
+      show: true,
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    // Store country position for floating notes
+    setSelectedCountryPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
 
     setIsLoading(true);
     setSelectedCountry(countryCode, countryName);
@@ -181,6 +213,10 @@ export function WorldMap() {
     }
   };
 
+  const handleRippleComplete = () => {
+    setRipple({ show: false, x: 0, y: 0 });
+  };
+
   return (
     <div className="map-container" onMouseMove={handleMouseMove}>
       <motion.div
@@ -205,35 +241,48 @@ export function WorldMap() {
                   const countryCode = countryCodeMap[countryName];
                   const isAvailable = !!countryCode;
                   const isHovered = hoveredCountry === countryCode;
+                  const isSelected = selectedCountry === countryCode;
+                  const hasMusic = isSelected && tracks.length > 0;
+                  const isPlaying = !!currentlyPlaying && hasMusic;
+
+                  // Determine the appropriate CSS classes for animations
+                  let animationClass = '';
+                  if (isPlaying) {
+                    animationClass = 'country-playing';
+                  } else if (isSelected) {
+                    animationClass = 'country-selected';
+                  } else if (isAvailable) {
+                    animationClass = 'country-available';
+                  }
 
                   return (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
-                      onClick={() => isAvailable && handleCountryClick(geo)}
+                      onClick={(event) => isAvailable && handleCountryClick(geo, event)}
                       onMouseEnter={(event) => isAvailable && handleMouseEnter(geo, event)}
                       onMouseLeave={handleMouseLeave}
                       style={{
                         default: {
-                          fill: isAvailable ? '#1DB954' : '#535353',
+                          fill: isAvailable ? (isSelected ? '#1ed760' : '#1DB954') : '#535353',
                           stroke: '#191414',
-                          strokeWidth: 0.5,
+                          strokeWidth: isSelected ? 1 : 0.5,
                           outline: 'none',
                         },
                         hover: {
                           fill: isAvailable ? '#1ed760' : '#535353',
                           stroke: '#191414',
-                          strokeWidth: 0.5,
+                          strokeWidth: isSelected ? 1 : 0.5,
                           outline: 'none',
                         },
                         pressed: {
                           fill: isAvailable ? '#169c46' : '#535353',
                           stroke: '#191414',
-                          strokeWidth: 0.5,
+                          strokeWidth: isSelected ? 1 : 0.5,
                           outline: 'none',
                         },
                       }}
-                      className={`country-path ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'} ${isHovered ? 'brightness-110' : ''}`}
+                      className={`country-path ${animationClass} ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'} ${isHovered ? 'brightness-110' : ''}`}
                     />
                   );
                 })
@@ -248,6 +297,21 @@ export function WorldMap() {
           x={tooltip.x}
           y={tooltip.y}
           country={tooltip.country}
+        />
+      )}
+
+      <RippleEffect
+        x={ripple.x}
+        y={ripple.y}
+        trigger={ripple.show}
+        onComplete={handleRippleComplete}
+      />
+
+      {selectedCountryPosition && selectedCountry && tracks.length > 0 && (
+        <FloatingNotes
+          show={true}
+          centerX={selectedCountryPosition.x}
+          centerY={selectedCountryPosition.y}
         />
       )}
     </div>

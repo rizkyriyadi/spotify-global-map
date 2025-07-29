@@ -2,14 +2,24 @@
 
 An interactive web application that displays a world map where users can click on countries to explore their Spotify Top 50 charts. Built with Next.js, TypeScript, and the Spotify Web API.
 
+## 🌐 Live Demo
+
+**Try it now:** [https://spotify-global-map.vercel.app/](https://spotify-global-map.vercel.app/)
+
+Click on any green country to explore its music and experience the interactive animations!
+
 ## Features
 
 - 🗺️ Interactive world map with clickable countries
 - 🎵 Spotify Top 50 charts for each country
-- 🎭 Mood-based filtering (Party, Chill, Sad)
+- 🎭 Mood-based filtering (Party, Chill, Sad, Energetic, Romantic, Focus, Upbeat)
 - ▶️ 30-second track previews
 - 📱 Responsive design with dark mode
-- ✨ Smooth animations with Framer Motion
+- ✨ **Enhanced Animations & Visual Effects:**
+  - 🌟 Pulsing country animations (available, selected, playing states)
+  - 💫 Click ripple effects
+  - 🎵 Floating musical notes around active countries
+  - 🌈 Dynamic gradient background animation
 - 🔗 Direct links to Spotify tracks
 
 ## Tech Stack
@@ -78,7 +88,9 @@ npm run dev
 │   └── page.tsx
 ├── components/
 │   ├── CountryTooltip.tsx
+│   ├── FloatingNotes.tsx
 │   ├── MoodFilter.tsx
+│   ├── RippleEffect.tsx
 │   ├── Sidebar.tsx
 │   ├── SongList.tsx
 │   └── WorldMap.tsx

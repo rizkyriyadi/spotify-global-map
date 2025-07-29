@@ -14,10 +14,28 @@
 @layer components {
   .map-container {
     @apply w-full h-screen relative overflow-hidden;
+    background: linear-gradient(-45deg, #191414, #1a1a1a, #0f0f0f, #1e1e1e);
+    background-size: 400% 400%;
+    animation: gradient-shift 15s ease infinite;
   }
   
   .country-path {
     @apply cursor-pointer transition-all duration-200 hover:brightness-110;
+  }
+  
+  .country-available {
+    @apply cursor-pointer transition-all duration-300;
+    filter: drop-shadow(0 0 3px rgba(29, 185, 84, 0.3));
+  }
+  
+  .country-selected {
+    animation: pulse-selected 2s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(29, 185, 84, 0.8));
+  }
+  
+  .country-playing {
+    animation: pulse-playing 1.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(30, 215, 96, 1));
   }
   
   .sidebar {
@@ -46,6 +64,51 @@
   
   .filter-button-active {
     @apply bg-spotify-green border-spotify-green text-black;
+  }
+}
+
+@keyframes pulse-selected {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(29, 185, 84, 0.8));
+  }
+  50% {
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 15px rgba(29, 185, 84, 1));
+  }
+}
+
+@keyframes pulse-playing {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 12px rgba(30, 215, 96, 1));
+  }
+  50% {
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 20px rgba(30, 215, 96, 1)) drop-shadow(0 0 30px rgba(30, 215, 96, 0.5));
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 
